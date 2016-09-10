@@ -10,6 +10,7 @@ from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
 from linguine.ops.remove_stopwords import RemoveStopwords
 from linguine.ops.sentence_tokenize import SentenceTokenize
+from linguine.ops.splat import Splat
 from linguine.ops.stem import StemmerPorter
 from linguine.ops.topic_model import TopicModel
 from linguine.ops.word_tokenize import WordTokenizeTreebank, \
@@ -64,6 +65,9 @@ def get_operation_handler(operation):
         return StanfordCoreNLP(['coref'])
     elif operation == 'nlp-relation':
         return StanfordCoreNLP(['parse', 'relation'])
+    elif operation == 'splat':
+        print('Lets get splatty')
+        return Splat()
     elif operation == 'noop':
         return NoOp()
     else:
