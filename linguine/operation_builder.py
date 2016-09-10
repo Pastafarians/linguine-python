@@ -10,13 +10,13 @@ from linguine.ops.remove_caps import RemoveCapsPreserveNNP
 from linguine.ops.remove_punct import RemovePunct
 from linguine.ops.remove_stopwords import RemoveStopwords
 from linguine.ops.sentence_tokenize import SentenceTokenize
-from linguine.ops.splat import Splat
 from linguine.ops.stem import StemmerPorter
 from linguine.ops.topic_model import TopicModel
 from linguine.ops.word_tokenize import WordTokenizeTreebank, \
         WordTokenizeWhitespacePunct, WordTokenizeStanford, \
         WordTokenizeSpaces, WordTokenizeTabs
 from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
+from linguine.ops.splat import SplatDisfluency
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
@@ -65,9 +65,9 @@ def get_operation_handler(operation):
         return StanfordCoreNLP(['coref'])
     elif operation == 'nlp-relation':
         return StanfordCoreNLP(['parse', 'relation'])
-    elif operation == 'splat':
-        print('Lets get splatty')
-        return Splat()
+    elif operation == 'splat-disfluency':
+        print("YOU GOT SPLATTED")
+        return SplatDisfluency()
     elif operation == 'noop':
         return NoOp()
     else:
