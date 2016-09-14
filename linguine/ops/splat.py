@@ -52,27 +52,27 @@ class SplatComplexity:
         try:
             for corpus in data:
                 temp_bubble = TextBubble(corpus.contents)
-                print("Calculating Content Density...")
-                content_density = temp_bubble.content_density()
-                print("Content Density: " + content_density)
-                print("Calculating Idea Density...")
-                idea_density = temp_bubble.idea_density()
-                print("Idea Density: " + idea_density)
-                print("Calculating Yngve Score...")
+                #print("Calculating Content Density...")
+                cdensity = temp_bubble.content_density()
+                #print(temp_bubble.content_density())
+                #print("Content Density: " + content_density)
+                #print("Calculating Idea Density...")
+                idensity = temp_bubble.idea_density()
+                #print("Idea Density: " + idea_density)
+                #print("Calculating Yngve Score...")
                 yngve_score = temp_bubble.tree_based_yngve_score()
-                print("Yngve Score: " + yngve_score)
-                print("Calculating Frazier Score...")
+                #print("Yngve Score: " + yngve_score)
+                #print("Calculating Frazier Score...")
                 frazier_score = temp_bubble.tree_based_frazier_score()
-                print("Frazier Score: " + frazier_score)
+                #print("Frazier Score: " + frazier_score)
                 results.append({'corpus_id': corpus.id,
-                                'content_density': content_density,
-                                'idea_density': idea_density,
-                                'yngve_score': ygnve_score,
+                                'content_density': cdensity,
+                                'idea_density': idensity,
+                                'yngve_score': yngve_score,
                                 'frazier_score': frazier_score})
             results = json.dumps(results)
             print(results)
             return results
-        except TypeError:
+        except TypeError as e:
+            print(e)
             raise TransactionException('Corpus contents does not exist.')
-        except:
-            print("Unexpected error:", sys.exc_info()[0])
