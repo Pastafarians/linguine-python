@@ -6,6 +6,7 @@ Given:
 
 from splat.base.TextBubble import TextBubble
 import splat.base.Util as Util
+from splat.parse.TreeStringParser import TreeStringParser
 import json, sys
 
 class SplatDisfluency:
@@ -52,24 +53,16 @@ class SplatComplexity:
         try:
             for corpus in data:
                 temp_bubble = TextBubble(corpus.contents)
-                #print("Calculating Content Density...")
+
                 cdensity = temp_bubble.content_density()
-                #print(temp_bubble.content_density())
-                #print("Content Density: " + content_density)
-                #print("Calculating Idea Density...")
                 idensity = temp_bubble.idea_density()
-                #print("Idea Density: " + idea_density)
-                #print("Calculating Yngve Score...")
-                yngve_score = temp_bubble.tree_based_yngve_score()
-                #print("Yngve Score: " + yngve_score)
-                #print("Calculating Frazier Score...")
-                frazier_score = temp_bubble.tree_based_frazier_score()
-                #print("Frazier Score: " + frazier_score)
+                flesch_score = temp_bubble.flesch_readability()
+                kincaid_score = temp_bubble.kincaid_grade_level()
                 results.append({'corpus_id': corpus.id,
                                 'content_density': cdensity,
                                 'idea_density': idensity,
-                                'yngve_score': yngve_score,
-                                'frazier_score': frazier_score})
+                                'flesch_score': flesch_score,
+                                'kincaid_score': kincaid_score})
             results = json.dumps(results)
             print(results)
             return results
