@@ -146,7 +146,9 @@ class Transaction:
             MainHandler.numTransactionsRunning -= 1
 
         except Exception as e:
+            #print(e.error)
             print("===========error==================")
-            print(json.JSONEncoder().encode({'error': e.error}))
+            print(e)
+            #print(json.JSONEncoder().encode({'error': e.error}))
             print("===========end_error==================")
 
