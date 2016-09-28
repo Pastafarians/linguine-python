@@ -17,7 +17,7 @@ from linguine.ops.word_tokenize import WordTokenizeTreebank, \
         WordTokenizeSpaces, WordTokenizeTabs
 from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
 from linguine.ops.splat import SplatDisfluency, SplatNGrams, \
-        SplatComplexity
+        SplatComplexity, SplatPOSFrequencies
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
@@ -75,6 +75,9 @@ def get_operation_handler(operation):
     elif operation == 'splat-complexity':
         print("YOU GOT SPLATTED")
         return SplatComplexity()
+    elif operation == 'splat-pos':
+        print("YOU GOT SPLATTED")
+        return SplatPOSFrequencies()
     elif operation == 'noop':
         return NoOp()
     else:

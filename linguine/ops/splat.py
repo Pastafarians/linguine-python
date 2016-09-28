@@ -102,3 +102,35 @@ class SplatComplexity:
         except TypeError as e:
             print(e)
             raise TransactionException('Corpus contents does not exist.')
+
+class SplatPOSFrequencies:
+    def __init__(self):
+        pass
+    def run(self,data):
+        results = [ ]
+        pos_parsed = {}
+        try:
+            for corpus in data:
+                temp_bubble = TextBubble(corpus.contents)
+                pos_tags = temp_bubble.pos()
+                pos_counts = temp_bubble.pos_counts()
+                for tuple in pos_tags:
+                    k = tuple[0]
+                    v = tuple[1]
+                    if v in pos_parsed.keys():
+                        if k not in pos_parsed[v]:
+                            pos_parsed[v].append(k)
+                    else:
+                        pos_parsed[v] = [ ]
+                        pos_parsed[v].append(k)
+
+                results.append({'corpus_id': corpus.id,
+                                'pos_tags': pos_parsed,
+                                'pos_counts': pos_counts})
+
+            results = json.dumps(results)
+            print(results)
+            return results
+        except TypeError as e:
+            print(e)
+            raise TransactionExceptions('Failed to run SplatPOSFrequencies.')
