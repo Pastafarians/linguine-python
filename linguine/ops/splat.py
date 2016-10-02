@@ -8,6 +8,7 @@ from splat.base.TextBubble import TextBubble
 import splat.base.Util as Util
 from splat.parse.TreeStringParser import TreeStringParser
 import json, sys
+from linguine.transaction_exception import TransactionException
 
 class SplatDisfluency:
     def __init__(self):
@@ -18,6 +19,7 @@ class SplatDisfluency:
             for corpus in data:
                 temp_bubble = TextBubble(corpus.contents)
                 raw_disfluencies = Util.count_disfluencies(temp_bubble.sents())
+                print(raw_disfluencies)
                 sentences = { }
                 average_disfluencies = 0
                 um_count, uh_count, ah_count, er_count, hm_count, sl_count, rep_count, brk_count = (0,) * 8
@@ -65,9 +67,26 @@ class SplatNGrams:
         try:
             for corpus in data:
                 temp_bubble = TextBubble(corpus.contents)
-                unigrams = temp_bubble.unigrams()
-                bigrams = temp_bubble.bigrams()
-                trigrams = temp_bubble.trigrams()
+                # Gather Unigram Frequencies
+                temp_unigrams = temp_bubble.unigrams()
+                unigrams = dict()
+                for item in temp_unigrams:
+                    unigrams[item[0]] = unigrams.get(item[0], 0) + 1
+
+                # Gather Bigram Frequencies
+                temp_bigrams = temp_bubble.bigrams()
+                bigrams = dict()
+                for item in temp_bigrams:
+                    parsed_item = ' '.join(item)
+                    bigrams[parsed_item] = bigrams.get(parsed_item, 0) + 1
+
+                # Gather Trigram Frequencies
+                temp_trigrams = temp_bubble.trigrams()
+                trigrams = dict()
+                for item in temp_trigrams:
+                    parsed_item = ' '.join(item)
+                    trigrams[parsed_item] = trigrams.get(parsed_item, 0) + 1
+
                 results.append({'corpus_id': corpus.id,
                                 'unigrams': unigrams,
                                 'bigrams': bigrams,
