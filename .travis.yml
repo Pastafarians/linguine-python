@@ -2,8 +2,8 @@ language: python
 
 matrix:
   include:
-    - python: 2.7
-      env: NUMPY=1.8 SCIPY=0.13
+    - python: 3.4
+      env: NUMPY=1.8 SCIPY=0.13 SPLAT-LIBRARY=0.2.3
 
 before_install:
  - travis_retry wget http://repo.continuum.io/miniconda/Miniconda-3.8.3-Linux-x86_64.sh -O miniconda.sh
