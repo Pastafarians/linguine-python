@@ -10,7 +10,7 @@ before_install:
  - chmod +x miniconda.sh
  - bash miniconda.sh -b -p $HOME/miniconda
  - export PATH=/home/travis/miniconda/bin:$PATH
- - conda update --yes conda
+ - travis_wait conda update --yes conda
  - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pip
  - conda info -a
  - pip install -r requirements.txt
