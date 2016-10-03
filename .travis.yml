@@ -6,16 +6,25 @@ matrix:
       env: "NUMPY=1.8 SCIPY=0.13"
 
 before_install:
- - travis_retry wget http://repo.continuum.io/miniconda/Miniconda3-3.4.2-Linux-x86_64.sh -O miniconda.sh
- - chmod +x miniconda.sh
- - bash miniconda.sh -b -p $HOME/miniconda
- - export PATH=/home/travis/miniconda/bin:$PATH
- - travis_wait conda update --yes conda
- - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pip
- - conda info -a
- - pip install -r requirements.txt
+ - travis_retry wget https://bootstrap.pypa.io/get-pip.py
+ - python get-pip.py
+ - pip install numpy=1.8
+ - pip install scipy=0.13
+ - pip install -r requirements
  - git clone https://github.com/brendano/stanford_corenlp_pywrapper scp_repo
  - ln -s scp_repo/stanford_corenlp_pywrapper .
+
+#before_install:
+# - travis_retry wget http://repo.continuum.io/miniconda/Miniconda3-3.4.2-Linux-x86_64.sh -O miniconda.sh
+# - chmod +x miniconda.sh
+# - bash miniconda.sh -b -p $HOME/miniconda
+# - export PATH=/home/travis/miniconda/bin:$PATH
+# - travis_wait conda update --yes conda
+# - conda install --yes numpy=$NUMPY scipy=$SCIPY matplotlib pip
+# - conda info -a
+# - pip install -r requirements.txt
+# - git clone https://github.com/brendano/stanford_corenlp_pywrapper scp_repo
+# - ln -s scp_repo/stanford_corenlp_pywrapper .
 
 script:
  - nosetests
