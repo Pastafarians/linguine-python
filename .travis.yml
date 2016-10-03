@@ -10,8 +10,9 @@ before_install:
  - python get-pip.py
  - pip install numpy==1.8
  - pip install scipy==0.13
+ - pip install matplotlib
  - pip install -r requirements.txt
- - git clone https://github.com/brendano/stanford_corenlp_pywrapper scp_repo
+ - git clone https://github.com/Pastafarians/stanford_corenlp_pywrapper scp_repo
  - ln -s scp_repo/stanford_corenlp_pywrapper .
 
 #before_install:
