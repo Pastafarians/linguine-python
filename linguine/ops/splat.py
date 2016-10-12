@@ -7,6 +7,8 @@ Given:
 from splat.base.TextBubble import TextBubble
 import splat.base.Util as Util
 from splat.parse.TreeStringParser import TreeStringParser
+import splat.complexity.Util as cUtil
+from splat.tokenizers.RawTokenizer import RawTokenizer
 import json, sys
 from linguine.transaction_exception import TransactionException
 
@@ -152,4 +154,38 @@ class SplatPOSFrequencies:
             return results
         except TypeError as e:
             print(e)
-            raise TransactionExceptions('Failed to run SplatPOSFrequencies.')
+            raise TransactionException('Failed to run SplatPOSFrequencies.')
+
+class SplatSyllables:
+    def __init__(self):
+        pass
+    def run(self, data):
+        results = [ ]
+        syllables_parsed = { }
+        try:
+            for corpus in data:
+                temp_bubble = TextBubble(corpus.contents)
+                temp_tokens = temp_bubble.tokens()
+                temp_tokens = ' '.join(temp_tokens).strip("\n").split(' ')
+                for tok in temp_tokens:
+                    temp_tok = tok.strip("\n")
+                    temp_syll_count = cUtil.count_syllables([temp_tok])
+                    if temp_syll_count == 0:
+                        temp_syll_count = 1
+                    if str(temp_syll_count) in syllables_parsed.keys():
+                        if tok not in syllables_parsed[str(temp_syll_count)]:
+                            syllables_parsed[str(temp_syll_count)].append(temp_tok)
+                    else:
+                        syllables_parsed[str(temp_syll_count)] = [ ]
+                        syllables_parsed[str(temp_syll_count)].append(temp_tok)
+
+                print("Creating results...")
+                results.append({'corpus_id': corpus.id,
+                                'syllables': syllables_parsed})
+
+            results = json.dumps(results)
+            print(results)
+            return results
+        except TypeError as e:
+            print(e)
+            raise TransactionException('Failed to run SplatSyllables.')
