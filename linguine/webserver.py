@@ -50,7 +50,10 @@ class MainHandler(tornado.web.RequestHandler):
         except Exception as err:
 
             print("===========error==================")
-            print(json.JSONEncoder().encode({'error': err.error}))
+            try:
+                print(json.JSONEncoder().encode({'error': err.error}))
+            except AttributeError as e:
+                print(json.JSONEncoder().encode({'error': e.error}))
             print("===========end_error==================")
             self.set_status(err.code)
             self.write(json.JSONEncoder().encode({'error': err.error}))
