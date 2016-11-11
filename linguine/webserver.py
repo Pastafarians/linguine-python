@@ -45,7 +45,7 @@ class MainHandler(tornado.web.RequestHandler):
             #Encapsulate running of analysis in a future
             print("Submitting analysis " + str(analysis_id) + " to analysis queue")
             self.analysis_executor.submit(transaction.run, analysis_id, self)
-
+            
         #Keep this error instance as a catch-all for all web requests
         except Exception as err:
 
@@ -66,3 +66,13 @@ if __name__ == "__main__":
         tornado.ioloop.IOLoop.instance().start()
     except KeyboardInterrupt:
         pass
+    #Keep this error instance as a catch-all for all web requests
+    except Exception as err:
+        print("===========error==================")
+        try:
+            print(json.JSONEncoder().encode({'error': err.error}))
+        except AttributeError as e:
+            print(json.JSONEncoder().encode({'error': e.error}))
+        print("===========end_error==================")
+        self.set_status(err.code)
+        self.write(json.JSONEncoder().encode({'error': err.error}))
