@@ -16,6 +16,7 @@ Check to ensure Tornado is installed
 try:
     import tornado.ioloop
     import tornado.web
+    import tornado.exceptions.MultipleExceptionsRaised
 except ImportError:
     sys.stderr.write("Tornado not found.")
 
@@ -45,10 +46,17 @@ class MainHandler(tornado.web.RequestHandler):
             #Encapsulate running of analysis in a future
             print("Submitting analysis " + str(analysis_id) + " to analysis queue")
             self.analysis_executor.submit(transaction.run, analysis_id, self)
-            
+
+        except tornado.exceptions.MultipleExceptionsRaised as multiple:
+            for e in multiple.get_all_exceptions():
+                print("===========error==================")
+                try:
+                    print(json.JSONEncoder().encode({'error': err.error}))
+                except AttributeError as e:
+                    print(json.JSONEncoder().encode({'error': e.error}))
+                print("===========end_error==================")
         #Keep this error instance as a catch-all for all web requests
         except Exception as err:
-
             print("===========error==================")
             try:
                 print(json.JSONEncoder().encode({'error': err.error}))
