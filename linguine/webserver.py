@@ -18,7 +18,7 @@ try:
     import tornado.web
     import tornado.exceptions.MultipleExceptionsRaised
 except ImportError:
-    sys.stderr.write("Tornado not found.")
+    stderr.write("Tornado not found.")
 
 class MainHandler(tornado.web.RequestHandler):
     numTransactionsRunning = 0
