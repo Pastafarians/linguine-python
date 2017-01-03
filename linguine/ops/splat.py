@@ -4,12 +4,12 @@ Returns:
 Given:
 """
 
-from splat.base.TextBubble import TextBubble
-import splat.base.Util as Util
-from splat.parse.TreeStringParser import TreeStringParser
-import splat.complexity.Util as cUtil
+from splat.SPLAT import SPLAT
+import splat.Util as Util
+from splat.parsers.TreeStringParser import TreeStringParser
+import splat.complexity as cUtil
 from splat.tokenizers.RawTokenizer import RawTokenizer
-import json, sys
+import json, sys, traceback
 from linguine.transaction_exception import TransactionException
 
 class SplatDisfluency:
@@ -19,7 +19,7 @@ class SplatDisfluency:
         results = [ ]
         try:
             for corpus in data:
-                temp_bubble = TextBubble(corpus.contents)
+                temp_bubble = SPLAT(corpus.contents)
                 raw_disfluencies = Util.count_disfluencies(temp_bubble.sents())
                 print(raw_disfluencies)
                 sentences = { }
@@ -68,7 +68,7 @@ class SplatNGrams:
         results = [ ]
         try:
             for corpus in data:
-                temp_bubble = TextBubble(corpus.contents)
+                temp_bubble = SPLAT(corpus.contents)
                 # Gather Unigram Frequencies
                 temp_unigrams = temp_bubble.unigrams()
                 unigrams = dict()
@@ -106,23 +106,35 @@ class SplatComplexity:
         results = [ ]
         try:
             for corpus in data:
-                temp_bubble = TextBubble(corpus.contents)
-
+                split_string = corpus.contents.split(" ")
+                temp_corpus = list(filter(("{SL}").__ne__, split_string))
+                temp_corpus = list(filter(("{sl}").__ne__, temp_corpus))
+                temp_corpus_contents = " ".join(temp_corpus)
+                #print(corpus.contents)
+                temp_bubble = SPLAT(temp_corpus_contents.rstrip('\n'))
+                #print(temp_bubble.splat())
                 cdensity = temp_bubble.content_density()
+                #print(temp_bubble.treestrings())
                 idensity = temp_bubble.idea_density()
+                #print(idensity)
                 flesch_score = temp_bubble.flesch_readability()
+                #print(flesch_score)
                 kincaid_score = temp_bubble.kincaid_grade_level()
+                #print(kincaid_score)
                 results.append({'corpus_id': corpus.id,
                                 'content_density': cdensity,
                                 'idea_density': idensity,
                                 'flesch_score': flesch_score,
                                 'kincaid_score': kincaid_score})
             results = json.dumps(results)
-            print(results)
+            #print(results)
             return results
         except TypeError as e:
             print(e)
             raise TransactionException('Corpus contents does not exist.')
+        #except Exception as e:
+        #    print(e)
+        #    traceback.print_stack()
 
 class SplatPOSFrequencies:
     def __init__(self):
@@ -132,7 +144,7 @@ class SplatPOSFrequencies:
         pos_parsed = {}
         try:
             for corpus in data:
-                temp_bubble = TextBubble(corpus.contents)
+                temp_bubble = SPLAT(corpus.contents)
                 pos_tags = temp_bubble.pos()
                 pos_counts = temp_bubble.pos_counts()
                 for tuple in pos_tags:
@@ -164,12 +176,17 @@ class SplatSyllables:
         syllables_parsed = { }
         try:
             for corpus in data:
-                temp_bubble = TextBubble(corpus.contents)
+                #temp_bubble = SPLAT(corpus.contents)
+                split_string = corpus.contents.split(" ")
+                temp_corpus = list(filter(("{SL}").__ne__, split_string))
+                temp_corpus = list(filter(("{sl}").__ne__, temp_corpus))
+                temp_corpus_contents = " ".join(temp_corpus)
+                temp_bubble = SPLAT(temp_corpus_contents.rstrip('\n'))
                 temp_tokens = temp_bubble.tokens()
                 temp_tokens = ' '.join(temp_tokens).strip("\n").split(' ')
                 for tok in temp_tokens:
                     temp_tok = tok.strip("\n")
-                    temp_syll_count = cUtil.count_syllables([temp_tok])
+                    temp_syll_count = cUtil.num_syllables([temp_tok])
                     if temp_syll_count == 0:
                         temp_syll_count = 1
                     if str(temp_syll_count) in syllables_parsed.keys():

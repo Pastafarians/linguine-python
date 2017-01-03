@@ -1,4 +1,5 @@
 import json
+import traceback
 import time
 import linguine.operation_builder
 from multiprocessing import Pool
@@ -148,7 +149,9 @@ class Transaction:
         except Exception as e:
             #print(e.error)
             print("===========error==================")
-            print(e.err)
+            print(e)
+            print(e.args)
+            traceback.print_exc()
             #print(json.JSONEncoder().encode({'error': e.error}))
             print("===========end_error==================")
 

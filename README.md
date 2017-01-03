@@ -1,3 +1,5 @@
+![Build-Indicator](https://travis-ci.org/Pastafarians/linguine-python.svg?branch=master)
+
 linguine-python
 ===============
 ## Overview
