@@ -3,7 +3,7 @@
 The Tornado server used to receive operation requests and deliver results to the user.
 """
 import json
-import os
+import os, sys
 
 from sys import stderr
 from linguine.transaction import Transaction
@@ -78,9 +78,9 @@ if __name__ == "__main__":
     except Exception as err:
         print("===========error==================")
         try:
-            print(json.JSONEncoder().encode({'error': err.error}))
+            print(json.JSONEncoder().encode({'error': err}))
         except AttributeError as e:
-            print(json.JSONEncoder().encode({'error': e.error}))
+            print(json.JSONEncoder().encode({'error': e}))
         print("===========end_error==================")
         self.set_status(err.code)
-        self.write(json.JSONEncoder().encode({'error': err.error}))
+        self.write(json.JSONEncoder().encode({'error': err}))

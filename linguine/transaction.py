@@ -148,7 +148,7 @@ class Transaction:
         except Exception as e:
             #print(e.error)
             print("===========error==================")
-            print(e)
+            print(e.err)
             #print(json.JSONEncoder().encode({'error': e.error}))
             print("===========end_error==================")
 

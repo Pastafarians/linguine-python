@@ -8,13 +8,12 @@ matrix:
 before_install:
  - travis_retry wget https://bootstrap.pypa.io/get-pip.py
  - python get-pip.py
- - pip install nltk
  - pip install numpy==1.8
  - pip install scipy==0.13
  - pip install matplotlib
  - pip install nose
- - travis_wait 30 python -m nltk.downloader stopwords
  - pip install -r requirements.txt
+ - travis_wait 30 python -m nltk.downloader stopwords names cmudict brown punkt averaged_perceptron_tagger
  - git clone https://github.com/Pastafarians/stanford_corenlp_pywrapper scp_repo
  - ln -s scp_repo/stanford_corenlp_pywrapper .
 
