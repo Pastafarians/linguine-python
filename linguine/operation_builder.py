@@ -18,7 +18,8 @@ from linguine.ops.word_tokenize import WordTokenizeTreebank, \
         WordTokenizeSpaces, WordTokenizeTabs
 from linguine.ops.StanfordCoreNLP import StanfordCoreNLP
 from linguine.ops.splat import SplatDisfluency, SplatNGrams, \
-        SplatComplexity, SplatPOSFrequencies, SplatSyllables
+        SplatComplexity, SplatPOSFrequencies, SplatSyllables, \
+        SplatPronouns
 
 def get_operation_handler(operation):
     if operation == 'lemmatize_wordnet':
@@ -84,6 +85,9 @@ def get_operation_handler(operation):
     elif operation == 'splat-syllables':
         print("YOU GOT SPLATTED")
         return SplatSyllables()
+    elif operation == 'splat-pronouns':
+        print("YOU GOT SPLATTED")
+        return SplatPronouns()
     elif operation == 'noop':
         return NoOp()
     else:

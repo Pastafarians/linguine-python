@@ -9,7 +9,7 @@ import splat.Util as Util
 from splat.parsers.TreeStringParser import TreeStringParser
 import splat.complexity as cUtil
 from splat.tokenizers.RawTokenizer import RawTokenizer
-import json, sys, traceback
+import json, sys, traceback, re
 from linguine.transaction_exception import TransactionException
 
 class SplatDisfluency:
@@ -121,11 +121,17 @@ class SplatComplexity:
                 #print(flesch_score)
                 kincaid_score = temp_bubble.kincaid_grade_level()
                 #print(kincaid_score)
+                types = len(temp_bubble.types())
+                tokens = len(temp_bubble.tokens())
+                type_token_ratio = float(float(types)/float(tokens))
                 results.append({'corpus_id': corpus.id,
                                 'content_density': cdensity,
                                 'idea_density': idensity,
                                 'flesch_score': flesch_score,
-                                'kincaid_score': kincaid_score})
+                                'kincaid_score': kincaid_score,
+                                'types': types,
+                                'tokens': tokens,
+                                'type_token_ratio': type_token_ratio})
             results = json.dumps(results)
             #print(results)
             return results
@@ -177,13 +183,14 @@ class SplatSyllables:
         try:
             for corpus in data:
                 #temp_bubble = SPLAT(corpus.contents)
-                split_string = corpus.contents.split(" ")
+                split_string = re.split(r'\s|\n', corpus.contents)
                 temp_corpus = list(filter(("{SL}").__ne__, split_string))
                 temp_corpus = list(filter(("{sl}").__ne__, temp_corpus))
                 temp_corpus_contents = " ".join(temp_corpus)
                 temp_bubble = SPLAT(temp_corpus_contents.rstrip('\n'))
                 temp_tokens = temp_bubble.tokens()
                 temp_tokens = ' '.join(temp_tokens).strip("\n").split(' ')
+                print(temp_tokens)
                 for tok in temp_tokens:
                     temp_tok = tok.strip("\n")
                     temp_syll_count = cUtil.num_syllables([temp_tok])
@@ -206,3 +213,37 @@ class SplatSyllables:
         except TypeError as e:
             print(e)
             raise TransactionException('Failed to run SplatSyllables.')
+
+class SplatPronouns:
+    def __init__(self):
+        pass
+    def run(self, data):
+        results = [ ]
+        first = { }
+        second = { }
+        third = { }
+        try:
+            for corpus in data:
+                temp_corpus = " ".join(re.split(r'\s|\n', corpus.contents))
+                temp_bubble = SPLAT(temp_corpus.rstrip("\n"))
+                pronouns = temp_bubble.raw_pronouns()
+                print(pronouns)
+                sents = temp_bubble.sents()
+
+            for p, v in pronouns.items():
+                if v[1] == "1st-Person": first[p] = v
+                elif v[1] == "2nd-Person":second[p] = v
+                elif v[1] == "3rd-Person":third[p] = v
+
+            results.append({'corpus_id': corpus.id,
+                            'first-person': first,
+                            'second-person': second,
+                            'third-person': third,
+                            'sentences': sents})
+
+            results = json.dumps(results)
+            print(results)
+            return results
+        except TypeError as e:
+            print(e)
+            raise TransactionException("Failed to run SplatPronouns.")
