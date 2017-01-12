@@ -3,7 +3,7 @@
 The Tornado server used to receive operation requests and deliver results to the user.
 """
 import json
-import os, sys
+import os, sys, psutil
 
 from sys import stderr
 from linguine.transaction import Transaction
@@ -22,6 +22,7 @@ except ImportError:
 
 class MainHandler(tornado.web.RequestHandler):
     numTransactionsRunning = 0
+    transactions = []
     try:
         maxThreadPoolWorkers = int(os.environ['LINGUINE_THREADS'])
     except KeyError as err:
@@ -34,6 +35,7 @@ class MainHandler(tornado.web.RequestHandler):
         try:
             self.numTransactionsRunning+=1
             transaction = Transaction()
+            self.transactions.append(transaction)
             requestObj = transaction.parse_json(self.request.body)
             transaction.read_corpora(transaction.corpora_ids)
             transaction.calcETA(self.numTransactionsRunning)
@@ -45,8 +47,17 @@ class MainHandler(tornado.web.RequestHandler):
 
             #Encapsulate running of analysis in a future
             print("Submitting analysis " + str(analysis_id) + " to analysis queue")
-            self.analysis_executor.submit(transaction.run, analysis_id, self)
+            f = self.analysis_executor.submit(transaction.run, analysis_id, self)
 
+#            print("Transactions: " + str(self.transactions))
+            for p in psutil.pids():
+                if psutil.Process(p).name() in ["python3.4", "java"]:
+                    for child in psutil.Process(p).children():
+                        cdict = child.as_dict(attrs=['pid', 'name', 'status', 'ppid'])
+                        print("\t" + str(cdict))
+                        if cdict['status'] in ['sleeping', 'zombie'] and self.numTransactionsRunning == 0:
+                            print("There are no transactions running currently. Cleaning up idle java threads.")
+                            child.kill()
 #        except tornado.exceptions.MultipleExceptionsRaised as multiple:
 #            for e in multiple.get_all_exceptions():
 #                print("===========error==================")
@@ -73,6 +84,15 @@ if __name__ == "__main__":
         application = tornado.web.Application([(r"/", MainHandler)])
         application.listen(5555)
         tornado.ioloop.IOLoop.instance().start()
+        for p in psutil.pids():
+            if psutil.Process(p).name() in ["python3.4", "java"]:
+                for child in psutil.Process(p).children():
+                    cdict = child.as_dict(attrs=['pid', 'name', 'status', 'ppid'])
+                    print("\t" + str(cdict))
+                    if cdict['status'] in ['sleeping', 'zombie'] and self.numTransactionsRunning == 0:
+                        print("There are no transactions running currently. Cleaning up idle java threads.")
+                        child.kill()
+
     except KeyboardInterrupt:
         pass
     #Keep this error instance as a catch-all for all web requests

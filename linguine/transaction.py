@@ -21,7 +21,7 @@ class Transaction:
         self.corpora_ids = []
         self.time_created = None
         self.corpora = []
-        self.analysis_pool = Pool(processes=5)
+        #self.analysis_pool = Pool(processes=5)
         self.analysis_name = ""
         self.cleanups = []
         self.current_result = None
@@ -29,6 +29,7 @@ class Transaction:
         self.token_based_operations = ['tfidf','word_cloud_op',
                 'stem_porter','stem_lancaster',
                 'stem_snowball','lemmatize_wordnet']
+        self.is_finished = False
     #Read in all corpora that are specified for a given transaction
     def read_corpora(self, corpora_ids):
         try:
@@ -57,16 +58,15 @@ class Transaction:
 
     #Write result object to DB
     def write_result(self, result, analysis_id):
-        analysis  = DatabaseAdapter.getDB().analyses.\
-                find_one({"_id" : ObjectId(analysis_id)})
+        analysis  = DatabaseAdapter.getDB().analyses.find_one({"_id" : ObjectId(analysis_id)})
 
         analysis['complete'] = True
         analysis['result'] = result
 
         print("Analysis " + str(analysis_id) + " complete. submitting record to DB")
 
-        DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)} ,
-                analysis);
+        DatabaseAdapter.getDB().analyses.update({'_id': ObjectId(analysis_id)}, analysis)
+        self.is_finished = True
     #Parse a JSON request from the linguine-node webserver,
     #Requesting that an analysis should be preformed
     def parse_json(self, json_data):
@@ -88,8 +88,7 @@ class Transaction:
                 self.tokenizer = input_data['tokenizer']
 
         except KeyError:
-            raise TransactionException('Missing property transaction_id, \
-                    operation, library, tokenizer or corpora_ids.')
+            raise TransactionException('Missing property transaction_id, operation, library, tokenizer or corpora_ids.')
         except ValueError:
             raise TransactionException('Could not parse JSON.')
     """

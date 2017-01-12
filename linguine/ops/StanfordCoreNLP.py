@@ -63,7 +63,7 @@ class StanfordCoreNLP:
 
         if StanfordCoreNLP.proc == None:
             StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':'tokenize, ssplit, pos, lemma, ner, parse, sentiment, dcoref, relation, natlog, openie'},
-            corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
+            corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')]) #, comm_mode='PIPE')
 #        else:
 #            StanfordCoreNLP.proc = CoreNLP(configdict={'annotators':', '.join(analysisType)},
 #            corenlp_jars=[os.path.join(os.path.dirname(__file__), '../../lib/*')])
