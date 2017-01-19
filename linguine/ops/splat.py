@@ -20,6 +20,8 @@ class SplatDisfluency:
         try:
             for corpus in data:
                 temp_bubble = SPLAT(corpus.contents)
+                print(corpus.contents)
+                print(temp_bubble.sents())
                 raw_disfluencies = Util.count_disfluencies(temp_bubble.sents())
                 print(raw_disfluencies)
                 sentences = { }
@@ -111,11 +113,14 @@ class SplatComplexity:
                 temp_corpus = list(filter(("{sl}").__ne__, temp_corpus))
                 temp_corpus_contents = " ".join(temp_corpus)
                 #print(corpus.contents)
-                temp_bubble = SPLAT(temp_corpus_contents.rstrip('\n'))
+                temp_bubble = SPLAT(temp_corpus_contents)
+                temp_trees = TreeStringParser().get_parse_trees(temp_bubble.sents())
                 #print(temp_bubble.splat())
-                cdensity = temp_bubble.content_density()
+                #cdensity = temp_bubble.content_density()
+                cdensity = cUtil.calc_content_density(temp_trees)[0]
                 #print(temp_bubble.treestrings())
-                idensity = temp_bubble.idea_density()
+                #idensity = temp_bubble.idea_density()
+                idensity = cUtil.calc_idea_density(temp_trees)[0]
                 #print(idensity)
                 flesch_score = temp_bubble.flesch_readability()
                 #print(flesch_score)
