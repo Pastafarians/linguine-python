@@ -117,7 +117,8 @@ class SplatComplexity:
                 temp_trees = TreeStringParser().get_parse_trees(temp_bubble.sents())
                 #print(temp_bubble.splat())
                 #cdensity = temp_bubble.content_density()
-                cdensity = cUtil.calc_content_density(temp_trees)[0]
+                cdensity = cUtil.calc_content_density(temp_trees)
+                print(cdensity)
                 #print(temp_bubble.treestrings())
                 #idensity = temp_bubble.idea_density()
                 idensity = cUtil.calc_idea_density(temp_trees)[0]
